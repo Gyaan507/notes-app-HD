@@ -48,7 +48,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions))
 
-// Add request logging middleware (only in development)
+
 if (process.env.NODE_ENV !== "production") {
   app.use((req, res, next) => {
     console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`)
@@ -58,15 +58,15 @@ if (process.env.NODE_ENV !== "production") {
 
 app.use(express.json())
 
-// Rate limiting
+
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 15 * 60 * 1000, 
   max: process.env.NODE_ENV === "production" ? 100 : 1000,
   message: "Too many requests from this IP, please try again later.",
 })
 app.use(limiter)
 
-// MongoDB connection
+n
 const connectDB = async () => {
   try {
     console.log("🔄 Connecting to MongoDB...")
@@ -80,17 +80,17 @@ const connectDB = async () => {
       useUnifiedTopology: true,
     })
 
-    console.log("✅ Connected to MongoDB successfully!")
+    console.log("Connected to MongoDB successfully!")
   } catch (error) {
-    console.error("❌ MongoDB connection error:", error.message)
+    console.error("MongoDB connection error:", error.message)
     process.exit(1)
   }
 }
 
-// Connect to database
+
 connectDB()
 
-// Handle MongoDB connection events
+
 mongoose.connection.on("error", (err) => {
   console.error("MongoDB connection error:", err)
 })
@@ -255,7 +255,7 @@ const authenticateToken = async (req, res, next) => {
 }
 
 // Routes
-// Send OTP for signup
+
 app.post("/api/auth/send-otp", async (req, res) => {
   try {
     console.log("📧 OTP request received")
@@ -335,7 +335,7 @@ app.post("/api/auth/signup", async (req, res) => {
       return res.status(400).json({ message: "User not found" })
     }
 
-    // Check OTP
+   
     if (!user.otp || user.otp.code !== otp) {
       return res.status(400).json({ message: "Invalid OTP" })
     }
@@ -344,7 +344,7 @@ app.post("/api/auth/signup", async (req, res) => {
       return res.status(400).json({ message: "OTP has expired" })
     }
 
-    // Verify user and clear OTP
+   
     user.isVerified = true
     user.otp = undefined
     await user.save()
@@ -431,7 +431,7 @@ app.get("/api/auth/profile", authenticateToken, async (req, res) => {
   }
 })
 
-// Get all notes for authenticated user
+
 app.get("/api/notes", authenticateToken, async (req, res) => {
   try {
     const notes = await Note.find({ userId: req.user._id }).sort({ createdAt: -1 })
@@ -443,7 +443,7 @@ app.get("/api/notes", authenticateToken, async (req, res) => {
   }
 })
 
-// Create a new note
+
 app.post("/api/notes", authenticateToken, async (req, res) => {
   try {
     const { title, content } = req.body
